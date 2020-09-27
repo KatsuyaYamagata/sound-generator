@@ -40,25 +40,24 @@ export const mutations = {
         state.oscillator2.start(0);
         break;
       case "mixedOscillator":
-        state.oscillator1 = ctx.createOscillator();
-        state.oscillator1.type = payload.frequencyType;
-        state.oscillator1.frequency.setValueAtTime(
-          payload.frequency,
+        //Sound1
+        var oscillator1 = ctx.createOscillator();
+        oscillator1.type = payload.sound1.frequencyType;
+        oscillator1.frequency.setValueAtTime(
+          payload.sound1.frequency,
           ctx.currentTime
         );
-        state.gainNode = ctx.createGain();
-        state.gainNode.gain.value = payload.gain;
-        //this.oscillator.connect(gainNode).connect(analyser);
-        //gainNode.connect(ctx.destination);
-
-        this.oscillator2 = ctx.createOscillator();
-        this.oscillator2.type = this.frequencyType2;
-        this.oscillator2.frequency.setValueAtTime(
-          this.frequency2,
+        var gainNode = ctx.createGain();
+        gainNode.gain.value = payload.sound1.gain;
+        //Sound2
+        var oscillator2 = ctx.createOscillator();
+        oscillator2.type = payload.sound2.frequencyType;
+        oscillator2.frequency.setValueAtTime(
+          payload.sound2.frequency,
           ctx.currentTime
         );
         var gainNode2 = ctx.createGain();
-        gainNode2.gain.value = this.gain2;
+        gainNode2.gain.value = payload.sound2.gain;
 
         //ローパスフィルター
         var vcf = ctx.createBiquadFilter();
@@ -70,12 +69,12 @@ export const mutations = {
 
         state.mixedOscillator = ctx.createOscillator();
         //接続
-        state.mixedOscillator.connect(state.oscillator1.frequency);
-        state.mixedOscillator.connect(state.oscillator2.frequency);
-        state.oscillator1.connect(state.gainNode);
-        state.oscillator2.connect(state.gainNode2);
-        state.gainNode.connect(vcf);
-        state.gainNode2.connect(vcf);
+        state.mixedOscillator.connect(oscillator1.frequency);
+        state.mixedOscillator.connect(oscillator2.frequency);
+        oscillator1.connect(gainNode);
+        oscillator2.connect(gainNode2);
+        gainNode.connect(vcf);
+        gainNode2.connect(vcf);
         vcf.connect(gainVcf).connect(analyser);
         gainVcf.connect(ctx.destination);
         break;
@@ -83,6 +82,7 @@ export const mutations = {
         break;
     }
 
+    if(payload)
     //Draw Waveform
     analyser.fftSize = 2048; // The default value
     //var canvas = this.$refs.canvas;
@@ -117,6 +117,8 @@ export const mutations = {
     }, 100);
     console.log(state.oscillator);
   },
+
+
   stopSound(state, payload) {
     switch (payload.target_osc) {
       case "oscillator1":

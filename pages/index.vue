@@ -119,7 +119,7 @@
             <v-card class="pa-6　mx-auto" outlined>
               <v-card-title>Mixed Sound</v-card-title>
               <v-card-actions class="pa-6">
-                <v-btn color="primary" @click="mixedAudioPlaytest">play</v-btn>
+                <v-btn color="primary" @click="mixedAudioPlay">play</v-btn>
                 <v-btn color="primary" @click="mixedAudioStop">stop</v-btn>
               </v-card-actions>
               <canvas ref="mixedCanvas" width="1000px" height="400px"></canvas>
@@ -142,7 +142,10 @@
 export default {
   data() {
     return {
-      //oscillator: {},
+      oscillator1: null,
+      oscillator2: null,
+      gainNode1: null,
+      gainNode2: null,
       sound1: {
         frequencyType: "sine",
         frequency: 440,
@@ -211,25 +214,25 @@ export default {
       if (!this.isPlaying) {
         var ctx = new AudioContext();
         var analyser = ctx.createAnalyser();
-        this.oscillator = ctx.createOscillator();
-        this.oscillator.type = this.frequencyType;
-        this.oscillator.frequency.setValueAtTime(
-          this.frequency,
+        this.oscillator1 = ctx.createOscillator();
+        this.oscillator1.type = this.sound1.frequencyType;
+        this.oscillator1.frequency.setValueAtTime(
+          this.sound1.frequency,
           ctx.currentTime
         );
-        var gainNode = ctx.createGain();
-        gainNode.gain.value = this.gain;
+        var gainNode1 = ctx.createGain();
+        gainNode1.gain.value = this.sound1.gain;
         //this.oscillator.connect(gainNode).connect(analyser);
         //gainNode.connect(ctx.destination);
 
         this.oscillator2 = ctx.createOscillator();
-        this.oscillator2.type = this.frequencyType2;
+        this.oscillator2.type = this.sound2.frequencyType;
         this.oscillator2.frequency.setValueAtTime(
-          this.frequency2,
+          this.sound2.frequency,
           ctx.currentTime
         );
         var gainNode2 = ctx.createGain();
-        gainNode2.gain.value = this.gain2;
+        gainNode2.gain.value = this.sound2.gain;
 
         //ローパスフィルター
         var vcf = ctx.createBiquadFilter();
@@ -241,18 +244,18 @@ export default {
 
         this.osc = ctx.createOscillator();
         //接続
-        this.osc.connect(this.oscillator.frequency);
+        this.osc.connect(this.oscillator1.frequency);
         this.osc.connect(this.oscillator2.frequency);
-        this.oscillator.connect(gainNode);
+        this.oscillator1.connect(gainNode1);
         this.oscillator2.connect(gainNode2);
-        gainNode.connect(vcf);
+        gainNode1.connect(vcf);
         gainNode2.connect(vcf);
         vcf.connect(gainVcf).connect(analyser);
         gainVcf.connect(ctx.destination);
 
         //描画用
         analyser.fftSize = 2048; // The default value
-        var canvas = this.$refs.canvas;
+        var canvas = this.$refs.mixedCanvas;
         var canvasContext = canvas.getContext("2d");
         this.intervalid = window.setInterval(function() {
           // Clear previous data
@@ -279,15 +282,15 @@ export default {
         }, 100);
 
         //this.oscillator.start(0);
-        this.osc.start(0);
-        this.oscillator.start(0);
+        //this.osc.start(0);
+        this.oscillator1.start(0);
         this.oscillator2.start(0);
         this.isPlaying = true;
       }
     },
     mixedAudioStop() {
-      this.osc.stop(0);
-      this.oscillator.stop(0);
+      //this.osc.stop(0);
+      this.oscillator1.stop(0);
       this.oscillator2.stop(0);
       this.isPlaying = false;
       if (this.intervalid !== null) {
