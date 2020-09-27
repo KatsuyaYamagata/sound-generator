@@ -1,51 +1,139 @@
 <template>
   <v-app>
     <v-main>
-      <v-row align="center" justify="center">
-        <v-col cols="12" sm="8" md="4">
-          <v-card>
-            <v-card-title class="headline">
-              Sound Generator
-            </v-card-title>
-            <v-radio-group
-              class="pa-6"
-              label="Sound Type"
-              v-model="frequencyType"
-              :mandatory="true"
-            >
-              <v-radio label="sine" value="sine"></v-radio>
-              <v-radio label="square" value="square"></v-radio>
-              <v-radio label="sawtooth" value="sawtooth"></v-radio>
-              <v-radio label="triangle" value="triangle"></v-radio>
-            </v-radio-group>
-            <v-slider
-              label="Frequency"
-              v-model="frequency"
-              thumb-label="always"
-              class="pa-6"
-              :thumb-size="40"
-              :max="20000"
-              :min="100"
-              hide-details
-            >
-            </v-slider>
-            <v-card-actions class="pa-6">
-              <v-btn color="primary" @click="audioPlay">play</v-btn>
-              <v-btn color="primary" @click="showStatus">status</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
+      <v-container>
+        <v-row align="center" justify="center">
+          <v-col cols="12">
+            <v-row align="center" justify="center">
+              <v-col cols="6" sm="12" md="6" align="center" justify="center">
+                <v-card class="pa-6　mx-auto" outlined>
+                  <v-card-title>Sound 1</v-card-title>
+                  <v-radio-group
+                    row
+                    class="pa-6"
+                    label="Sound Type"
+                    v-model="sound1.frequencyType"
+                    :mandatory="true"
+                  >
+                    <v-radio label="sine" value="sine"></v-radio>
+                    <v-radio label="square" value="square"></v-radio>
+                    <v-radio label="sawtooth" value="sawtooth"></v-radio>
+                    <v-radio label="triangle" value="triangle"></v-radio>
+                  </v-radio-group>
+                  <v-slider
+                    label="Frequency"
+                    v-model="sound1.frequency"
+                    thumb-label="always"
+                    class="pa-6"
+                    :thumb-size="35"
+                    :max="2000"
+                    :min="100"
+                    hide-details
+                  >
+                  </v-slider>
+                  <v-slider
+                    label="Gain"
+                    v-model="sound1.gain"
+                    thumb-label="always"
+                    class="pa-6"
+                    :thumb-size="35"
+                    :min="0"
+                    :max="0.5"
+                    :step="0.01"
+                    hide-details
+                  >
+                  </v-slider>
+                  <v-row align-content="end" justify="center">
+                    <v-col cols="4">
+                      <v-card-actions class="pa-6">
+                        <v-btn color="primary" @click="audioPlay">play</v-btn>
+                        <v-btn color="primary" @click="audioStop">stop</v-btn>
+                      </v-card-actions>
+                    </v-col>
+                    <v-col cols="8">
+                      <v-card-subtitle class="text-body-1"
+                        >Waveform Preview</v-card-subtitle
+                      >
+                      <canvas ref="canvas1"></canvas>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+              <v-col cols="6" sm="12" md="6" align="center" justify="center">
+                <v-card class="pa-6　mx-auto" outlined>
+                  <v-card-title>Sound 2</v-card-title>
+                  <v-radio-group
+                    row
+                    class="pa-6"
+                    label="Sound Type"
+                    v-model="sound2.frequencyType"
+                    :mandatory="true"
+                  >
+                    <v-radio label="sine" value="sine"></v-radio>
+                    <v-radio label="square" value="square"></v-radio>
+                    <v-radio label="sawtooth" value="sawtooth"></v-radio>
+                    <v-radio label="triangle" value="triangle"></v-radio>
+                  </v-radio-group>
+                  <v-slider
+                    label="Frequency"
+                    v-model="sound2.frequency"
+                    thumb-label="always"
+                    class="pa-6"
+                    :thumb-size="35"
+                    :max="2000"
+                    :min="100"
+                    hide-details
+                  >
+                  </v-slider>
+                  <v-slider
+                    label="Gain"
+                    v-model="sound2.gain"
+                    thumb-label="always"
+                    class="pa-6"
+                    :thumb-size="35"
+                    :min="0"
+                    :max="0.5"
+                    :step="0.01"
+                    hide-details
+                  >
+                  </v-slider>
+                  <v-row align-content="end" justify="center">
+                    <v-col cols="4">
+                      <v-card-actions class="pa-6">
+                        <v-btn color="primary" @click="audioPlay2">play</v-btn>
+                        <v-btn color="primary" @click="audioStop2">stop</v-btn>
+                      </v-card-actions>
+                    </v-col>
+                    <v-col cols="8">
+                      <v-card-subtitle class="text-body-1"
+                        >Waveform Preview</v-card-subtitle
+                      >
+                      <canvas ref="canvas2"></canvas>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="12" align="center" justify="center">
+            <v-card class="pa-6　mx-auto" outlined>
+              <v-card-title>Mixed Sound</v-card-title>
+              <v-card-actions class="pa-6">
+                <v-btn color="primary" @click="mixedAudioPlaytest">play</v-btn>
+                <v-btn color="primary" @click="mixedAudioStop">stop</v-btn>
+              </v-card-actions>
+              <canvas ref="mixedCanvas" width="1000px" height="400px"></canvas>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
     <template>
-      <v-card
-      height="150">
-        <v-footer absolute class="font-weight-medium">
-          <v-col class="text-center" cols="12">
-            {{ new Date().getFullYear() }} — monja lab
-          </v-col>
-        </v-footer>
-      </v-card>
+      <v-footer app absolute class="font-weight-medium">
+        <v-col class="text-center" cols="12">
+          {{ new Date().getFullYear() }} — monja lab
+        </v-col>
+      </v-footer>
     </template>
   </v-app>
 </template>
@@ -54,36 +142,166 @@
 export default {
   data() {
     return {
-      frequencyType: "sine",
-      oscillator: {},
-      isPlaying: false,
-      frequency: 440
+      //oscillator: {},
+      sound1: {
+        frequencyType: "sine",
+        frequency: 440,
+        gain: 0.5,
+        canvas: null,
+        intervalid: null,
+        target_osc: "oscillator1"
+      },
+      sound2: {
+        frequencyType: "sine",
+        frequency: 440,
+        gain: 0.5,
+        canvas: null,
+        intervalid: null,
+        target_osc: "oscillator2"
+      },
+      mixedSound: {
+        frequencyType: "sine",
+        frequency: 440,
+        gain: 0.5,
+        canvas: null,
+        intervalid: null,
+        target_osc: "mixedOscillator"
+      },
+      isPlaying: false
     };
+  },
+  mounted() {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
   },
   methods: {
     audioPlay() {
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContext();
-      const gainNode = ctx.createGain();
-      gainNode.gain.value = 0.3;
-      if (this.isPlaying) return;
-      this.oscillator = ctx.createOscillator();
-      this.oscillator.type = this.frequencyType;
-      this.oscillator.frequency.setValueAtTime(this.frequency, ctx.currentTime);
-      this.oscillator.connect(gainNode).connect(ctx.destination);
-      this.oscillator.start();
-      this.oscillator.stop(2);
+      if (!this.isPlaying) {
+        this.sound1.canvas = this.$refs.canvas1;
+        this.$store.commit("sound/playSound", this.sound1);
+        this.isPlaying = true;
+      }
     },
     audioStop() {
-      this.oscillator.stop();
+      if (this.isPlaying) {
+        this.$store.commit("sound/stopSound", this.sound1);
+        this.isPlaying = false;
+      }
+    },
+    audioPlay2() {
+      if (!this.isPlaying) {
+        this.sound2.canvas = this.$refs.canvas2;
+        this.$store.commit("sound/playSound", this.sound2);
+        this.isPlaying = true;
+      }
+    },
+    audioStop2() {
+      if (this.isPlaying) {
+        this.$store.commit("sound/stopSound", this.sound2);
+        this.isPlaying = false;
+      }
+    },
+    mixedAudioPlaytest() {
+      if (!this.isPlaying) {
+        this.mixedSound.canvas = this.$refs.mixedCanvas;
+        this.$store.commit("sound/playSound", this.$data);
+        this.isPlaying = true;
+      }
+    },
+    mixedAudioPlay() {
+      if (!this.isPlaying) {
+        var ctx = new AudioContext();
+        var analyser = ctx.createAnalyser();
+        this.oscillator = ctx.createOscillator();
+        this.oscillator.type = this.frequencyType;
+        this.oscillator.frequency.setValueAtTime(
+          this.frequency,
+          ctx.currentTime
+        );
+        var gainNode = ctx.createGain();
+        gainNode.gain.value = this.gain;
+        //this.oscillator.connect(gainNode).connect(analyser);
+        //gainNode.connect(ctx.destination);
+
+        this.oscillator2 = ctx.createOscillator();
+        this.oscillator2.type = this.frequencyType2;
+        this.oscillator2.frequency.setValueAtTime(
+          this.frequency2,
+          ctx.currentTime
+        );
+        var gainNode2 = ctx.createGain();
+        gainNode2.gain.value = this.gain2;
+
+        //ローパスフィルター
+        var vcf = ctx.createBiquadFilter();
+        vcf.type = "lowpass";
+        vcf.frequency.value = 20000;
+
+        var gainVcf = ctx.createGain();
+        gainVcf.gain.value = 1.0;
+
+        this.osc = ctx.createOscillator();
+        //接続
+        this.osc.connect(this.oscillator.frequency);
+        this.osc.connect(this.oscillator2.frequency);
+        this.oscillator.connect(gainNode);
+        this.oscillator2.connect(gainNode2);
+        gainNode.connect(vcf);
+        gainNode2.connect(vcf);
+        vcf.connect(gainVcf).connect(analyser);
+        gainVcf.connect(ctx.destination);
+
+        //描画用
+        analyser.fftSize = 2048; // The default value
+        var canvas = this.$refs.canvas;
+        var canvasContext = canvas.getContext("2d");
+        this.intervalid = window.setInterval(function() {
+          // Clear previous data
+          canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+          // Get data for drawing sound wave
+          var times = new Uint8Array(analyser.fftSize);
+          analyser.getByteTimeDomainData(times);
+          // Draw sound wave
+          canvasContext.beginPath();
+          for (var i = 0, len = times.length; i < len; i++) {
+            var x = (i / len) * canvas.width;
+            var y = (1 - times[i] / 255) * canvas.height;
+            if (i === 0) {
+              canvasContext.moveTo(x, y);
+            } else {
+              canvasContext.lineTo(x, y);
+            }
+          }
+          canvasContext.strokeStyle = "rgba(0, 0, 255, 1.0)";
+          canvasContext.lineWidth = 2;
+          canvasContext.lineCap = "round";
+          canvasContext.lineJoin = "miter";
+          canvasContext.stroke();
+        }, 100);
+
+        //this.oscillator.start(0);
+        this.osc.start(0);
+        this.oscillator.start(0);
+        this.oscillator2.start(0);
+        this.isPlaying = true;
+      }
+    },
+    mixedAudioStop() {
+      this.osc.stop(0);
+      this.oscillator.stop(0);
+      this.oscillator2.stop(0);
       this.isPlaying = false;
+      if (this.intervalid !== null) {
+        window.clearTimeout(this.intervalid);
+        this.intervalid = null;
+      }
       console.log(this.isPlaying);
     },
     showStatus() {
       console.log(this.isPlaying);
-      console.log(this.oscillator);
       console.log(this.frequencyType);
       console.log(this.frequency);
+      console.log(this.intervalid);
+      console.log(this.gain);
     }
   }
 };
